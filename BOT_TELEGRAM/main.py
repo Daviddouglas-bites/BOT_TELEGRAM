@@ -1,21 +1,18 @@
 import os, sys, requests, platform, time
-from chave_bot import API_TOKEN  # Importa corretamente o token
+from chave_bot import API_TOKEN
+from funcoes import setor_x  # ✅ Novo import
 
-# Usa o token importado
+# URLs do bot
 strURLBase = f'https://api.telegram.org/bot{API_TOKEN}'
 strURLGetUpdates = f'{strURLBase}/getUpdates'
-strURLSendMessage = f'{strURLBase}/sendMessage'
 
 # Limpa a tela
 os.system('cls' if platform.system() == 'Windows' else 'clear')
-
-print('\nBOT TELEGRAM - Aguardando mensagens...')
-
+print('\nBem vindo em que posso ajudar? - Aguardando mensagens...')
 
 intIDUltimaMensagem = 0
 
 while True:
-    # Obtém as mensagens com offset
     params = {'offset': intIDUltimaMensagem + 1}
     reqURL = requests.get(strURLGetUpdates, params=params)
 
@@ -36,17 +33,7 @@ while True:
         strComando = mensagem['message'].get('text', '')
         intIDChat = mensagem['message']['chat']['id']
 
-        if strComando == '/?':
-            strMensagemRetorno = f'BOT: Texto de Ajuda...\nUsuário:{intIDChat}'
-        elif strComando == '/start':
-            strMensagemRetorno = f'BOT: Bem-vindo ao BOT do Estudante David Douglas...\nUsuário:{intIDChat}'
-        else:
-            strMensagemRetorno = f'BOT: Comando não reconhecido, por favor tente novamente ...\nUsuário:{intIDChat}'
-
-        dictDados = {'chat_id': intIDChat, 'text': strMensagemRetorno}
-        respEnvio = requests.post(strURLSendMessage, data=dictDados)
-
-        if respEnvio.status_code != 200:
-            print('\nERRO ao enviar mensagem...\nCÓDIGO:', respEnvio.status_code)
+        # ✅ Chama a função externa
+        setor_x(intIDChat, API_TOKEN)
 
     time.sleep(1)
